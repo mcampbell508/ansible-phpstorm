@@ -57,4 +57,4 @@ roles:
 This role has been tested using Ansible `2.4.1.0` on Ubunut 16.04, so this role might not work when using older versions of Ansible.
 
 ## License
-MIT
+MIT, please see [LICENSE](./LICENSE)
