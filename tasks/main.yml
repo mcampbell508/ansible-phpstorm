@@ -1,0 +1,136 @@
+---
+# Install & Configure PhpStorm
+
+- name: Get JSON from PhpStorm URL
+  uri:
+    url: "{{ phpstorm_releases_url }}"
+    method: GET
+    return_content: yes
+  register: phpstorm_releases
+
+- name: Get latest version number and download url
+  set_fact:
+    phpstorm_available_version: "{{ phpstorm_releases.json  | json_query('PS[].version') }}"
+    phpstorm_available_url: "{{ phpstorm_releases.json | json_query('PS[].downloads.linux.link') }}"
+    phpstorm_available_build: "{{ phpstorm_releases.json | json_query('PS[].build') }}"
+  when:
+    - (phpstorm_releases.json | json_query('PS[].version')) is defined
+    - (phpstorm_releases.json | json_query('PS[].downloads.linux.link')) is defined
+    - (phpstorm_releases.json | json_query('PS[].build')) is defined
+
+## need to fix the following - its hacky
+- name: reset facts
+  set_fact:
+    phpstorm_available_version: "{{ phpstorm_available_version[0] }}"
+    phpstorm_available_url: "{{ phpstorm_available_url[0]}}"
+    phpstorm_available_build: "{{ phpstorm_available_build[0]}}"
+
+- name: debug phpstorm variables
+  debug:
+    msg:
+    - "Verison: {{ phpstorm_available_version }}"
+    - "URL: {{ phpstorm_available_url }}"
+    - "Build path: {{ phpstorm_build_path }}"
+
+- name: Check if phpstorm is already installed
+  stat:
+    path="{{ phpstorm_install_path }}"
+  register: phpstorm_already_exists_check
+
+- name: Does it exist?
+  set_fact:
+    phpstorm_already_exists: true
+  when: phpstorm_already_exists_check.stat.isdir is defined and phpstorm_already_exists_check.stat.isdir
+
+# JetBrains adds a file `build.txt` to the root of the download, to store the build version.
+- name: Check currently installed build version is available
+  stat:
+    path="{{ phpstorm_build_path }}"
+  register: phpstorm_installed_build_available_check
+
+- name: Set whether the currently installed build version is avaialable
+  set_fact:
+    phpstorm_installed_build_version_available: true
+  when: phpstorm_installed_build_available_check.stat is defined and phpstorm_installed_build_available_check.stat.exists
+
+- name: Get currently installed build version
+  set_fact:
+    phpstorm_found_build_version: "{{ lookup('file', phpstorm_build_path) }}"
+  when:
+    - phpstorm_installed_build_version_available == true
+
+- name: Debug build versions
+  debug: 
+    msg: 
+      - "Currently installed build version: {{ phpstorm_found_build_version }}"
+      - "Available build version: PS-{{ phpstorm_available_build }}"
+
+- name: Check installed version is not the same as currently installed
+  set_fact:
+    phpstorm_can_be_installed: true
+  when:
+    - phpstorm_found_build_version != 'PS-'+phpstorm_available_build
+
+- name: Get the user running the playbook
+  debug: msg="{{ lookup('env','USER') }}"
+
+- name: Check download does not already exist
+  stat:
+    path="/tmp/PhpStorm-{{phpstorm_available_version}}.tar.gz"
+  register: phpstorm_download_exists
+  when:
+    - phpstorm_can_be_installed == true
+
+- name: Download latest version of PhpStorm (This could take a few minutes...)
+  get_url:
+    url: "{{ phpstorm_available_url }}"
+    dest: "/tmp/"
+    mode: 0440
+  when:
+    - phpstorm_can_be_installed == true
+    - ansible_user != 'root'
+    - phpstorm_download_exists.stat.exists == false
+  become: true
+  become_user: "{{ ansible_user}}"
+
+- name: Remove currently installed version
+  local_action: file path={{phpstorm_install_path}} state=absent
+  when:
+    - phpstorm_can_be_installed == true
+    - phpstorm_already_exists == true
+  become: true
+
+- name: Create PhpStorm install directory
+  become: true
+  file:
+    path: /opt/phpstorm
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  when:
+    - phpstorm_can_be_installed == true
+    - ansible_user != 'root'
+
+- name: Extract PhpStorm
+  unarchive:
+    extra_opts: ['--strip-components=1']
+    src: "/tmp/PhpStorm-{{phpstorm_available_version}}.tar.gz"
+    dest: "{{phpstorm_install_path}}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  when:
+    - phpstorm_can_be_installed == true    
+    - ansible_user != 'root'
+  become: true
+  become_user: "{{ ansible_user }}"
+
+- name: Create symlink for phpstorm
+  file:
+    src: "{{phpstorm_install_path}}/bin/phpstorm.sh"
+    dest: /usr/local/bin/phpstorm
+    state: link
+  when:
+    - phpstorm_can_be_installed == true
+    - ansible_user != 'root'
+  become: true
+  become_user: "{{ ansible_user }}"
