@@ -1,0 +1,12 @@
+[vagrant]
+virtualbox_phpstorm ansible_host=192.168.33.12 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+
+[all:vars]
+ansible_connection=ssh
+ansible_host=virtualbox_phpstorm
+ansible_port=22
+ansible_user=ubuntu
+ansible_ssh_pass=vagrant
+ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+ansible_os_family=Debian
+ansible_timeout=120
