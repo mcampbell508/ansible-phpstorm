@@ -1,5 +1,8 @@
 # Ansible Role PhpStorm
 
+[![License](https://img.shields.io/badge/License-MIT%20License-blue.svg)](https://github.com/mcampbell508/ansible-phpstorm/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/mcampbell508/ansible-phpstorm.svg?branch=master)](https://travis-ci.org/mcampbell508/ansible-phpstorm)
+
 This is an Ansible role for installing the **latest** stable version of PhpStorm on a Linux machine.
 
 JetBrains kindly provides [this URL](https://data.services.jetbrains.com/products/releases?code=PS&latest=true&type=release) which is used by this role to obtain the download URL of the latest stable version.
