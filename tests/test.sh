@@ -45,10 +45,6 @@ opts="--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
 elif [ $distro = 'ubuntu1404' ]; then
 init="/sbin/init"
 opts="--privileged"
-# Ubuntu 12.04
-elif [ $distro = 'ubuntu1204' ]; then
-init="/sbin/init"
-opts="--privileged"
 # Debian 8
 elif [ $distro = 'debian9' ]; then
 init="/lib/systemd/systemd"
