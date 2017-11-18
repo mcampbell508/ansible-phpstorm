@@ -9,8 +9,5 @@ env:
   - distro: debian8
 
 script:
-# Download test shim.
   - chmod +x ${PWD}/tests/test.sh
-
-# Run tests.
   - ${PWD}/tests/test.sh
