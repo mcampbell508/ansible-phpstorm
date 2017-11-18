@@ -69,6 +69,10 @@ docker run --detach --volume="$PWD":/etc/ansible/roles/role_under_test:rw --name
 
 printf "\n"
 
+if [ $distro = 'fedora24' ]; then
+docker exec --tty $container_id yum -y install tar.x86_64 unzip
+fi
+
 docker exec --tty $container_id sudo useradd travis
 docker exec --tty $container_id python -V
 
