@@ -2,5 +2,13 @@
 - hosts: localhost
   connection: local
   become: true
+  vars:
+    ci_testing: true
+    ansible_user: "travis"
+    phpstorm_available_version: "2017.2.4"
+    phpstorm_available_build: "172.4155.41"
+    phpstorm_archive_location: "/etc/ansible/roles/role_under_test/tests/travis/"
+    phpstorm_archive_path: "{{ phpstorm_archive_location }}PhpStorm-{{ phpstorm_available_version }}.tar.gz"
+    phpstorm_available_url: "https://github.com/mcampbell508/ansible-phpstorm/raw/master/tests/travis/PhpStorm-2017.2.4.tar.gz"
   roles:
-    - ../../
+    - role_under_test

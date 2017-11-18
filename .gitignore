@@ -5,3 +5,4 @@ vagrant_ansible_inventory_*
 ansible.cfg
 tests/ubuntu*
 playbook.retry
+tests/travis/test.retry

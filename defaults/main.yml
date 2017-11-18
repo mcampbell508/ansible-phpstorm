@@ -4,9 +4,11 @@ phpstorm_releases_url: "https://data.services.jetbrains.com/products/releases?co
 phpstorm_available_version: ""
 phpstorm_available_url: ""
 phpstorm_available_build: ""
+phpstorm_archive_location: "/tmp/"
+phpstorm_archive_path: "{{ phpstorm_archive_location }}"
 
 phpstorm_install_path: "/opt/phpstorm"
-phpstorm_build_path: "{{phpstorm_install_path}}/build.txt"
+phpstorm_build_path: "{{ phpstorm_install_path }}/build.txt"
 
 phpstorm_found_build_version: ""
 
