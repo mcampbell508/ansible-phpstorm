@@ -7,20 +7,13 @@ This is an Ansible role for installing the **latest** stable version of PhpStorm
 
 JetBrains kindly provides [this URL](https://data.services.jetbrains.com/products/releases?code=PS&latest=true&type=release) which is used by this role to obtain the download URL of the latest stable version.
 
-## Requirements
+## Prerequisites
+By using this role, you should be aware that the following packages will be installed on your system if they are not present:
 
-You will need to install the following package `python-jmespath` before you can use this role.
+- `unzip`
+- `tar`
 
-```
-# Ubuntu
-
-sudo apt-get update
-sudo apt-get install python-jmespath
-
-# Fedora
-
-dnf install python-jmespath
-```
+They are used to unpack the compressed PhpStorm download file.
 
 ## Variables
 
