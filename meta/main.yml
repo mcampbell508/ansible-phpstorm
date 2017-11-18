@@ -2,7 +2,7 @@
 
 galaxy_info:
   author: mcampbell508
-  description: Install the latest available version PhpStorm automatically.
+  description: Install the latest available version of PhpStorm, automatically.
   min_ansible_version: 2.4
   license: MIT
   platforms:
